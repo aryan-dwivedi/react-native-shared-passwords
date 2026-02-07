@@ -27,7 +27,8 @@ sidebar_position: 1
 
 - React Native Old Architecture (Bridge)
 - React Native New Architecture (Turbo Modules + Codegen)
-- Expo support via config plugin
+- Expo development builds via config plugin
+- **Expo Go graceful fallbacks** - Detects Expo Go and provides helpful error messages
 
 ## Quick Example
 
@@ -56,6 +57,7 @@ const assertion = await SharedPasswords.authenticateWithPasskey({
 ## Next Steps
 
 - [Installation](./installation) - Install the package
+- [Expo Setup](./expo-setup) - Expo configuration and Expo Go handling
 - [iOS Setup](./ios-setup) - Configure associated domains
 - [Android Setup](./android-setup) - Configure asset links
 - [API Reference](./api-reference) - Full API documentation

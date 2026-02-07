@@ -186,9 +186,7 @@ function App(): React.JSX.Element {
         {platformSupport && (
           <View style={styles.supportInfo}>
             <Text style={styles.supportTitle}>Platform Support</Text>
-            <Text style={styles.supportText}>
-              OS Version: {platformSupport.currentOSVersion}
-            </Text>
+            <Text style={styles.supportText}>OS Version: {platformSupport.currentOSVersion}</Text>
             <Text style={styles.supportText}>
               Password AutoFill: {platformSupport.passwordAutoFill ? 'Yes' : 'No'}
             </Text>
@@ -229,7 +227,10 @@ function App(): React.JSX.Element {
           <TouchableOpacity style={styles.button} onPress={handleCheckCredentials}>
             <Text style={styles.buttonText}>Check Credentials</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.button, styles.dangerButton]} onPress={handleDeleteCredential}>
+          <TouchableOpacity
+            style={[styles.button, styles.dangerButton]}
+            onPress={handleDeleteCredential}
+          >
             <Text style={styles.buttonText}>Delete Credential</Text>
           </TouchableOpacity>
         </View>

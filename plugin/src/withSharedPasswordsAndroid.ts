@@ -1,8 +1,4 @@
-import {
-  ConfigPlugin,
-  withAndroidManifest,
-  AndroidConfig,
-} from '@expo/config-plugins';
+import { ConfigPlugin, withAndroidManifest, AndroidConfig } from '@expo/config-plugins';
 import type { SharedPasswordsPluginOptions } from './index';
 
 /**
@@ -25,8 +21,8 @@ const withCredentialManagerManifest: ConfigPlugin<SharedPasswordsPluginOptions> 
   config,
   _options
 ) => {
-  return withAndroidManifest(config, (config) => {
-    const manifest = config.modResults;
+  return withAndroidManifest(config, (innerConfig) => {
+    const manifest = innerConfig.modResults;
     const application = AndroidConfig.Manifest.getMainApplicationOrThrow(manifest);
 
     // Ensure meta-data array exists
@@ -50,7 +46,7 @@ const withCredentialManagerManifest: ConfigPlugin<SharedPasswordsPluginOptions> 
       });
     }
 
-    return config;
+    return innerConfig;
   });
 };
 
@@ -72,7 +68,7 @@ const withCredentialManagerManifest: ConfigPlugin<SharedPasswordsPluginOptions> 
  *   }
  * }]
  */
-export function generateAssetStatements(domains: string[], packageName: string): string {
+export function generateAssetStatements(domains: string[], _packageName: string): string {
   const statements = domains.map((domain) => ({
     include: `https://${domain}/.well-known/assetlinks.json`,
   }));

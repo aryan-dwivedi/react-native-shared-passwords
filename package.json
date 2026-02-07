@@ -4,7 +4,7 @@
   "description": "Cross-platform password/credential sharing between web and mobile apps using native platform APIs",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
-  "types": "lib/typescript/src/index.d.ts",
+  "types": "lib/typescript/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "files": [
@@ -106,6 +106,8 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "docs/",
+    "example/"
   ]
 }

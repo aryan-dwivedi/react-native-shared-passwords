@@ -258,3 +258,70 @@ try {
 | `NO_CREDENTIALS` | No credentials found |
 | `DOMAIN_NOT_CONFIGURED` | Domain not in associated domains |
 | `UNKNOWN` | Unknown error |
+
+---
+
+## Expo Go Utilities
+
+Helper functions for detecting and handling Expo Go environments.
+
+### isExpoGo()
+
+Checks if the app is running in Expo Go.
+
+```typescript
+import { isExpoGo } from 'react-native-shared-passwords';
+
+if (isExpoGo()) {
+  console.log('Running in Expo Go - native features unavailable');
+}
+```
+
+**Returns:** `boolean`
+
+---
+
+### hasNativeModule()
+
+Checks if the native module is available.
+
+```typescript
+import { hasNativeModule } from 'react-native-shared-passwords';
+
+if (hasNativeModule()) {
+  // Native features available
+}
+```
+
+**Returns:** `boolean`
+
+---
+
+### getExecutionEnvironment()
+
+Returns the current execution environment.
+
+```typescript
+import { getExecutionEnvironment } from 'react-native-shared-passwords';
+
+const env = getExecutionEnvironment();
+// Returns: 'expo-go' | 'development-build' | 'bare'
+```
+
+**Returns:** `'expo-go' | 'development-build' | 'bare'`
+
+---
+
+### getEnvironmentMessage()
+
+Returns a user-friendly message about the current environment and available features.
+
+```typescript
+import { getEnvironmentMessage } from 'react-native-shared-passwords';
+
+const message = getEnvironmentMessage();
+console.log(message);
+// Example: "Running in Expo Go. Native password features require a development build."
+```
+
+**Returns:** `string`

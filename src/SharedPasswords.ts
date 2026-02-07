@@ -10,6 +10,57 @@ import type {
   OperationResult,
 } from './types';
 import { SharedPasswordsError, SharedPasswordsErrorCode } from './types';
+import { isExpoGo, getExecutionEnvironment, getEnvironmentMessage } from './ExpoGoDetection';
+import ExpoGoFallback from './ExpoGoFallback';
+
+/**
+ * Native module interface for SharedPasswords
+ */
+interface NativeSharedPasswordsModule {
+  requestPasswordAutoFill(): Promise<{ username: string; password: string }>;
+  savePassword(
+    username: string,
+    password: string,
+    domain: string
+  ): Promise<{ success: boolean; error?: string }>;
+  hasStoredCredentials(domain: string): Promise<boolean>;
+  deleteCredential(username: string, domain: string): Promise<{ success: boolean; error?: string }>;
+  createPasskey(options: {
+    rpId: string;
+    rpName: string;
+    challenge: string;
+    userId: string;
+    userName: string;
+    userDisplayName: string;
+    timeout: number;
+    authenticatorAttachment: string;
+    residentKey: string;
+    userVerification: string;
+    attestation: string;
+  }): Promise<{
+    credentialId: string;
+    rawId: string;
+    type: string;
+    authenticatorData?: string;
+    clientDataJSON: string;
+    attestationObject?: string;
+  }>;
+  authenticateWithPasskey(options: {
+    rpId: string;
+    challenge: string;
+    timeout: number;
+    userVerification: string;
+  }): Promise<{
+    credentialId: string;
+    rawId: string;
+    type: string;
+    authenticatorData?: string;
+    clientDataJSON: string;
+    signature?: string;
+    userHandle?: string;
+  }>;
+  getPlatformSupport(): PlatformSupport;
+}
 
 const LINKING_ERROR =
   `The package 'react-native-shared-passwords' doesn't seem to be linked. Make sure: \n\n` +
@@ -17,34 +68,37 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go (use a development build instead)';
 
+// Check if running in Expo Go
+const _isExpoGo = isExpoGo();
+
 // Try to get the Turbo Module, fall back to bridge module
-let SharedPasswordsModule: any;
+let SharedPasswordsModule: NativeSharedPasswordsModule | null = null;
 
-try {
-  // Try Turbo Module first (new architecture)
-  SharedPasswordsModule = require('./NativeSharedPasswords').default;
-} catch {
-  // Fall back to bridge module (old architecture)
-  SharedPasswordsModule = NativeModules.SharedPasswords;
-}
+if (!_isExpoGo) {
+  try {
+    // Try Turbo Module first (new architecture)
+    SharedPasswordsModule = require('./NativeSharedPasswords').default;
+  } catch {
+    // Fall back to bridge module (old architecture)
+    SharedPasswordsModule = NativeModules.SharedPasswords as NativeSharedPasswordsModule;
+  }
 
-if (!SharedPasswordsModule) {
-  SharedPasswordsModule = new Proxy(
-    {},
-    {
+  if (!SharedPasswordsModule) {
+    SharedPasswordsModule = new Proxy({} as NativeSharedPasswordsModule, {
       get() {
         throw new Error(LINKING_ERROR);
       },
-    }
-  );
+    });
+  }
 }
 
 /**
  * Normalize error from native module to SharedPasswordsError
  */
-function normalizeError(error: any): SharedPasswordsError {
-  const message = error?.message || 'Unknown error occurred';
-  const code = error?.code as SharedPasswordsErrorCode;
+function normalizeError(error: unknown): SharedPasswordsError {
+  const errorObj = error as { message?: string; code?: string } | null | undefined;
+  const message = errorObj?.message || 'Unknown error occurred';
+  const code = errorObj?.code as SharedPasswordsErrorCode;
 
   if (Object.values(SharedPasswordsErrorCode).includes(code)) {
     return new SharedPasswordsError(code, message);
@@ -85,8 +139,11 @@ const SharedPasswords = {
    * ```
    */
   async requestPasswordAutoFill(): Promise<Credential> {
+    if (_isExpoGo) {
+      return ExpoGoFallback.requestPasswordAutoFill();
+    }
     try {
-      const result = await SharedPasswordsModule.requestPasswordAutoFill();
+      const result = await SharedPasswordsModule!.requestPasswordAutoFill();
       return {
         username: result.username,
         password: result.password,
@@ -112,9 +169,12 @@ const SharedPasswords = {
    * ```
    */
   async savePassword(options: SavePasswordOptions): Promise<OperationResult> {
+    if (_isExpoGo) {
+      return ExpoGoFallback.savePassword(options);
+    }
     try {
       const domain = options.domain || '';
-      const result = await SharedPasswordsModule.savePassword(
+      const result = await SharedPasswordsModule!.savePassword(
         options.username,
         options.password,
         domain
@@ -143,8 +203,11 @@ const SharedPasswords = {
    * ```
    */
   async hasStoredCredentials(domain: string): Promise<boolean> {
+    if (_isExpoGo) {
+      return ExpoGoFallback.hasStoredCredentials(domain);
+    }
     try {
-      return await SharedPasswordsModule.hasStoredCredentials(domain);
+      return await SharedPasswordsModule!.hasStoredCredentials(domain);
     } catch (error) {
       throw normalizeError(error);
     }
@@ -165,8 +228,14 @@ const SharedPasswords = {
    * ```
    */
   async deleteCredential(options: DeleteCredentialOptions): Promise<OperationResult> {
+    if (_isExpoGo) {
+      return ExpoGoFallback.deleteCredential(options);
+    }
     try {
-      const result = await SharedPasswordsModule.deleteCredential(options.username, options.domain);
+      const result = await SharedPasswordsModule!.deleteCredential(
+        options.username,
+        options.domain
+      );
       return {
         success: result.success,
         error: result.error,
@@ -194,6 +263,9 @@ const SharedPasswords = {
    * ```
    */
   async createPasskey(options: CreatePasskeyOptions): Promise<PasskeyCredential> {
+    if (_isExpoGo) {
+      return ExpoGoFallback.createPasskey(options);
+    }
     try {
       const nativeOptions = {
         rpId: options.rpId,
@@ -209,7 +281,7 @@ const SharedPasswords = {
         attestation: options.attestation || 'none',
       };
 
-      const result = await SharedPasswordsModule.createPasskey(nativeOptions);
+      const result = await SharedPasswordsModule!.createPasskey(nativeOptions);
       return {
         credentialId: result.credentialId,
         rawId: result.rawId,
@@ -239,6 +311,9 @@ const SharedPasswords = {
    * ```
    */
   async authenticateWithPasskey(options: AuthenticatePasskeyOptions): Promise<PasskeyCredential> {
+    if (_isExpoGo) {
+      return ExpoGoFallback.authenticateWithPasskey(options);
+    }
     try {
       const nativeOptions = {
         rpId: options.rpId,
@@ -247,7 +322,7 @@ const SharedPasswords = {
         userVerification: options.userVerification || 'preferred',
       };
 
-      const result = await SharedPasswordsModule.authenticateWithPasskey(nativeOptions);
+      const result = await SharedPasswordsModule!.authenticateWithPasskey(nativeOptions);
       return {
         credentialId: result.credentialId,
         rawId: result.rawId,
@@ -276,8 +351,11 @@ const SharedPasswords = {
    * ```
    */
   getPlatformSupport(): PlatformSupport {
+    if (_isExpoGo) {
+      return ExpoGoFallback.getPlatformSupport();
+    }
     try {
-      return SharedPasswordsModule.getPlatformSupport();
+      return SharedPasswordsModule!.getPlatformSupport();
     } catch {
       // Return defaults if module not available
       return {
@@ -288,6 +366,44 @@ const SharedPasswords = {
         currentOSVersion: 'Unknown',
       };
     }
+  },
+
+  /**
+   * Check if running in Expo Go
+   *
+   * When running in Expo Go, native features are not available.
+   * Use this to conditionally show features or provide alternative flows.
+   *
+   * @returns true if running in Expo Go
+   *
+   * @example
+   * ```typescript
+   * if (SharedPasswords.isExpoGo()) {
+   *   console.log('Running in Expo Go - native features unavailable');
+   *   console.log(SharedPasswords.getEnvironmentInfo());
+   * }
+   * ```
+   */
+  isExpoGo(): boolean {
+    return _isExpoGo;
+  },
+
+  /**
+   * Get execution environment information
+   *
+   * @returns 'expo-go' | 'development-build' | 'bare'
+   */
+  getExecutionEnvironment(): 'expo-go' | 'development-build' | 'bare' {
+    return getExecutionEnvironment();
+  },
+
+  /**
+   * Get a user-friendly message about the current environment
+   *
+   * @returns Information about the environment and available features
+   */
+  getEnvironmentInfo(): string {
+    return getEnvironmentMessage();
   },
 };
 

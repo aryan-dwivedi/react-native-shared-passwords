@@ -13,3 +13,11 @@ export type {
 } from './types';
 
 export { SharedPasswordsError, SharedPasswordsErrorCode } from './types';
+
+// Expo Go utilities
+export {
+  isExpoGo,
+  hasNativeModule,
+  getExecutionEnvironment,
+  getEnvironmentMessage,
+} from './ExpoGoDetection';

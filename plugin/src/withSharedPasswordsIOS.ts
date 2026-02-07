@@ -31,11 +31,11 @@ export const withSharedPasswordsIOS: ConfigPlugin<SharedPasswordsPluginOptions> 
  * Add associated domains for webcredentials and passkeys
  */
 const withAssociatedDomains: ConfigPlugin<SharedPasswordsPluginOptions> = (config, options) => {
-  return withEntitlementsPlist(config, (config) => {
+  return withEntitlementsPlist(config, (innerConfig) => {
     const domains = options.domains || [];
 
     if (domains.length === 0) {
-      return config;
+      return innerConfig;
     }
 
     const associatedDomains: string[] = [];
@@ -48,9 +48,9 @@ const withAssociatedDomains: ConfigPlugin<SharedPasswordsPluginOptions> = (confi
       associatedDomains.push(`applinks:${domain}`);
     }
 
-    config.modResults['com.apple.developer.associated-domains'] = associatedDomains;
+    innerConfig.modResults['com.apple.developer.associated-domains'] = associatedDomains;
 
-    return config;
+    return innerConfig;
   });
 };
 
@@ -58,17 +58,17 @@ const withAssociatedDomains: ConfigPlugin<SharedPasswordsPluginOptions> = (confi
  * Add keychain sharing capability
  */
 const withKeychainSharing: ConfigPlugin<SharedPasswordsPluginOptions> = (config, options) => {
-  return withEntitlementsPlist(config, (config) => {
+  return withEntitlementsPlist(config, (innerConfig) => {
     if (!options.keychainGroup) {
-      return config;
+      return innerConfig;
     }
 
     const teamId = options.teamId || '$(AppIdentifierPrefix)';
     const fullGroup = `${teamId}${options.keychainGroup}`;
 
-    config.modResults['keychain-access-groups'] = [fullGroup];
+    innerConfig.modResults['keychain-access-groups'] = [fullGroup];
 
-    return config;
+    return innerConfig;
   });
 };
 
@@ -76,11 +76,11 @@ const withKeychainSharing: ConfigPlugin<SharedPasswordsPluginOptions> = (config,
  * Enable AuthenticationServices capability in Xcode project
  */
 const withAuthenticationServicesCapability: ConfigPlugin = (config) => {
-  return withXcodeProject(config, (config) => {
-    const project = config.modResults;
+  return withXcodeProject(config, (innerConfig) => {
+    const project = innerConfig.modResults;
 
     // Get the target
-    const targetName = config.modRequest.projectName || 'App';
+    const targetName = innerConfig.modRequest.projectName || 'App';
     const targetUuid = project.findTargetKey(targetName);
 
     if (targetUuid) {
@@ -91,7 +91,7 @@ const withAuthenticationServicesCapability: ConfigPlugin = (config) => {
       });
     }
 
-    return config;
+    return innerConfig;
   });
 };
 
@@ -99,9 +99,9 @@ const withAuthenticationServicesCapability: ConfigPlugin = (config) => {
  * Add required Info.plist entries
  */
 export const withSharedPasswordsInfoPlist: ConfigPlugin = (config) => {
-  return withInfoPlist(config, (config) => {
+  return withInfoPlist(config, (innerConfig) => {
     // No specific Info.plist entries required for basic functionality
     // But we could add custom entries here if needed
-    return config;
+    return innerConfig;
   });
 };

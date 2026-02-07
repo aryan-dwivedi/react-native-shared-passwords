@@ -4,7 +4,55 @@ sidebar_position: 5
 
 # Expo Setup
 
-This package includes an Expo config plugin for easy setup.
+This package includes an Expo config plugin for easy setup and graceful Expo Go support.
+
+## Expo Go Support
+
+This package now provides graceful handling when running in Expo Go:
+
+```tsx
+import SharedPasswords from 'react-native-shared-passwords';
+
+// Check if running in Expo Go
+if (SharedPasswords.isExpoGo()) {
+  console.log('Running in Expo Go - native features unavailable');
+  console.log(SharedPasswords.getEnvironmentInfo());
+}
+
+// Check platform support (returns false in Expo Go)
+const support = SharedPasswords.getPlatformSupport();
+if (support.passwordAutoFill) {
+  // Show password autofill button
+}
+
+// Methods will throw NOT_SUPPORTED error in Expo Go
+try {
+  const credential = await SharedPasswords.requestPasswordAutoFill();
+} catch (error) {
+  if (error.code === 'NOT_SUPPORTED') {
+    // Handle gracefully - show alternative login UI
+  }
+}
+```
+
+### Helper Functions
+
+```tsx
+import { 
+  isExpoGo, 
+  getExecutionEnvironment,
+  getEnvironmentMessage 
+} from 'react-native-shared-passwords';
+
+// Check if running in Expo Go
+const inExpoGo = isExpoGo(); // true in Expo Go
+
+// Get environment type
+const env = getExecutionEnvironment(); // 'expo-go' | 'development-build' | 'bare'
+
+// Get user-friendly message
+const message = getEnvironmentMessage();
+```
 
 ## Installation
 
@@ -43,8 +91,11 @@ Add the plugin to your `app.json` or `app.config.js`:
 
 ## Build
 
-:::warning
-This package requires native code and **will not work with Expo Go**. You must use a development build.
+:::info Expo Go Limitations
+While this package provides graceful fallbacks for Expo Go, **native features require a development build**. In Expo Go:
+- `getPlatformSupport()` returns all features as `false`
+- All native methods throw `NOT_SUPPORTED` errors with helpful messages
+- Your app can detect this and show alternative UI
 :::
 
 ### Development Build

@@ -32,6 +32,57 @@ sidebar_position: 8
 
 ---
 
+### Expo Go: "NOT_SUPPORTED" errors
+
+**Symptoms:**
+- Error code: `NOT_SUPPORTED`
+- Error message mentions "Expo Go"
+- All password/passkey features fail
+
+**Cause:** Expo Go doesn't support custom native modules. This is a fundamental limitation of Expo Go.
+
+**Solutions:**
+
+1. **Use a development build instead of Expo Go:**
+   ```bash
+   npx expo run:ios
+   # or
+   npx expo run:android
+   ```
+
+2. **Or create an EAS development build:**
+   ```bash
+   eas build --profile development --platform all
+   ```
+
+3. **Detect Expo Go and show alternative UI:**
+   ```typescript
+   import SharedPasswords, { isExpoGo } from 'react-native-shared-passwords';
+
+   if (isExpoGo()) {
+     // Show manual login form or message
+     Alert.alert(
+       'Development Build Required',
+       'Password autofill requires a development build. ' +
+       'Please use manual login for now.'
+     );
+   } else {
+     // Use native password features
+     const credential = await SharedPasswords.requestPasswordAutoFill();
+   }
+   ```
+
+4. **Check platform support before using features:**
+   ```typescript
+   const support = SharedPasswords.getPlatformSupport();
+   // In Expo Go, all values will be false
+   if (support.passwordAutoFill) {
+     // Safe to use
+   }
+   ```
+
+---
+
 ### "Not supported" errors
 
 **Symptoms:**
