@@ -1,6 +1,6 @@
 {
   "name": "react-native-shared-credentials",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Cross-platform password/credential sharing between web and mobile apps using native platform APIs",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
