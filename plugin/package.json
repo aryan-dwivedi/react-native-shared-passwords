@@ -10,8 +10,8 @@
     "prepare": "npm run build"
   },
   "devDependencies": {
-    "@expo/config-plugins": "^8.0.0",
-    "typescript": "^5.2.2"
+    "@expo/config-plugins": "^54.0.4",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "@expo/config-plugins": ">=7.0.0"
