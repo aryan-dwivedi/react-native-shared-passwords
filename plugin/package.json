@@ -1,0 +1,19 @@
+{
+  "name": "react-native-shared-passwords-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf build",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@expo/config-plugins": "^8.0.0",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "@expo/config-plugins": ">=7.0.0"
+  }
+}
