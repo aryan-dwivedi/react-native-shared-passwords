@@ -29,7 +29,7 @@ RCT_EXTERN_METHOD(authenticateWithPasskey:(NSDictionary *)options
                   withResolver:(RCTPromiseResolveBlock)resolve
                   withRejecter:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN__BLOCKING_SYNCHRONOUS_METHOD(getPlatformSupport)
+RCT_EXTERN_BLOCKING_SYNCHRONOUS_METHOD(getPlatformSupport)
 
 + (BOOL)requiresMainQueueSetup
 {
