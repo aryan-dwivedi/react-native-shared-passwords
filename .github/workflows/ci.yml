@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typescript
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm test -- --coverage
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Install example dependencies
+        working-directory: example
+        run: npm install
+      - name: Generate iOS project
+        working-directory: example
+        run: npx @react-native-community/cli@latest init SharedPasswordsExample --directory temp-init --version 0.83.1 --skip-git-init --skip-install && cp -r temp-init/ios . && rm -rf temp-init
+      - name: Pod install
+        working-directory: example/ios
+        run: pod install
+      - name: Build iOS
+        working-directory: example/ios
+        run: |
+          xcodebuild \
+            -workspace SharedPasswordsExample.xcworkspace \
+            -scheme SharedPasswordsExample \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            build \
+            CODE_SIGNING_ALLOWED=NO
+
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - run: npm ci
+      - run: npm run build
+      - name: Install example dependencies
+        working-directory: example
+        run: npm install
+      - name: Generate Android project
+        working-directory: example
+        run: npx @react-native-community/cli@latest init SharedPasswordsExample --directory temp-init --version 0.83.1 --skip-git-init --skip-install && cp -r temp-init/android . && rm -rf temp-init
+      - name: Build Android
+        working-directory: example/android
+        run: ./gradlew assembleDebug
+
+  publish-docs:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [lint, test, build]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install docs dependencies
+        working-directory: docs
+        run: npm ci
+      - name: Build docs
+        working-directory: docs
+        run: npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/build

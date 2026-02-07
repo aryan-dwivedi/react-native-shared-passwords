@@ -1,0 +1,29 @@
+{
+  "name": "react-native-shared-credentials-example",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "build:android": "cd android && ./gradlew assembleRelease",
+    "build:ios": "cd ios && xcodebuild -workspace SharedPasswordsExample.xcworkspace -scheme SharedPasswordsExample -configuration Release"
+  },
+  "dependencies": {
+    "react": "19.2.4",
+    "react-native": "0.83.1",
+    "react-native-shared-credentials": "file:.."
+  },
+  "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
+    "@babel/runtime": "^7.28.6",
+    "@react-native-community/cli": "^20.1.1",
+    "@react-native-community/cli-platform-android": "^20.1.1",
+    "@react-native-community/cli-platform-ios": "^20.1.1",
+    "@react-native/babel-preset": "0.83.1",
+    "@react-native/metro-config": "0.83.1",
+    "@types/react": "^19.2.13",
+    "typescript": "^5.9.3"
+  }
+}

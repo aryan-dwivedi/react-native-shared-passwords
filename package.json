@@ -1,0 +1,121 @@
+{
+  "name": "react-native-shared-credentials",
+  "version": "0.1.0",
+  "description": "Cross-platform password/credential sharing between web and mobile apps using native platform APIs",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "ios",
+    "android",
+    "plugin",
+    "react-native-shared-credentials.podspec",
+    "react-native.config.js",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "build": "bob build",
+    "clean": "del-cli lib",
+    "prepare": "bob build",
+    "typescript": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "test": "jest",
+    "release": "release-it",
+    "example": "yarn workspace react-native-shared-credentials-example",
+    "docs": "cd docs && npm start",
+    "docs:build": "cd docs && npm run build"
+  },
+  "keywords": [
+    "react-native",
+    "ios",
+    "android",
+    "password",
+    "autofill",
+    "credentials",
+    "keychain",
+    "passkeys",
+    "fido2",
+    "webauthn",
+    "biometric",
+    "credential-manager"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aryan-dwivedi/react-native-shared-credentials.git"
+  },
+  "author": "Aryan Dwivedi <aryandwivd@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aryan-dwivedi/react-native-shared-credentials/issues"
+  },
+  "homepage": "https://github.com/aryan-dwivedi/react-native-shared-credentials#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.28.5",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.19.0",
+    "@react-native/eslint-config": "^0.83.1",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.13",
+    "del-cli": "^7.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^17.3.0",
+    "jest": "^30.2.0",
+    "prettier": "^3.8.1",
+    "react": "19.2.4",
+    "react-native": "0.83.1",
+    "react-native-builder-bob": "^0.40.17",
+    "release-it": "^19.2.4",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "engines": {
+    "node": ">= 18.0.0"
+  },
+  "codegenConfig": {
+    "name": "RNSharedPasswordsSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.sharedpasswords"
+    }
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/",
+    "docs/",
+    "example/"
+  ]
+}
