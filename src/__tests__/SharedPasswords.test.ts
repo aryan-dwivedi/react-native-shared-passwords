@@ -13,7 +13,7 @@ const mockHasStoredCredentials = jest.fn();
 const mockDeleteCredential = jest.fn();
 const mockCreatePasskey = jest.fn();
 const mockAuthenticateWithPasskey = jest.fn();
-const mockGetPlatformSupport = jest.fn(() => ({
+const mockGetPlatformSupport = jest.fn(() => Promise.resolve({
   passwordAutoFill: true,
   passkeys: true,
   savePassword: true,
@@ -338,7 +338,7 @@ describe('SharedPasswords', () => {
   });
 
   describe('getPlatformSupport', () => {
-    it('should return platform support information', () => {
+    it('should return platform support information', async () => {
       const mockSupport = {
         passwordAutoFill: true,
         passkeys: true,
@@ -346,19 +346,17 @@ describe('SharedPasswords', () => {
         minOSVersion: 'iOS 12+',
         currentOSVersion: 'iOS 17.0',
       };
-      mockGetPlatformSupport.mockReturnValue(mockSupport);
+      mockGetPlatformSupport.mockResolvedValue(mockSupport);
 
-      const result = SharedPasswords.getPlatformSupport();
+      const result = await SharedPasswords.getPlatformSupport();
 
       expect(result).toEqual(mockSupport);
     });
 
-    it('should return defaults when module throws', () => {
-      mockGetPlatformSupport.mockImplementation(() => {
-        throw new Error('Module not available');
-      });
+    it('should return defaults when module throws', async () => {
+      mockGetPlatformSupport.mockRejectedValue(new Error('Module not available'));
 
-      const result = SharedPasswords.getPlatformSupport();
+      const result = await SharedPasswords.getPlatformSupport();
 
       expect(result).toEqual({
         passwordAutoFill: false,

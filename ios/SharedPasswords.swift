@@ -240,8 +240,8 @@ class SharedPasswords: NSObject {
 
     // MARK: - Platform Support
 
-    @objc(getPlatformSupport)
-    func getPlatformSupport() -> NSDictionary {
+    @objc(getPlatformSupport:withRejecter:)
+    func getPlatformSupport(_ resolve: @escaping RCTPromiseResolveBlock, withRejecter reject: @escaping RCTPromiseRejectBlock) {
         let osVersion = ProcessInfo.processInfo.operatingSystemVersion
         let versionString = "\(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
 
@@ -249,13 +249,13 @@ class SharedPasswords: NSObject {
         let passkeys = osVersion.majorVersion >= 16
         let savePassword = osVersion.majorVersion >= 8
 
-        return [
+        resolve([
             "passwordAutoFill": passwordAutoFill,
             "passkeys": passkeys,
             "savePassword": savePassword,
             "minOSVersion": passkeys ? "16.0" : (passwordAutoFill ? "13.0" : "8.0"),
             "currentOSVersion": versionString
-        ]
+        ])
     }
 
     // MARK: - Helpers
@@ -302,7 +302,6 @@ extension SharedPasswords: ASAuthorizationControllerDelegate {
                     "credentialId": registration.credentialID.base64EncodedString(),
                     "rawId": registration.credentialID.base64EncodedString(),
                     "type": "public-key",
-                    "authenticatorData": registration.rawAuthenticatorData?.base64EncodedString() ?? "",
                     "clientDataJSON": registration.rawClientDataJSON.base64EncodedString(),
                     "attestationObject": registration.rawAttestationObject?.base64EncodedString() ?? ""
                 ]

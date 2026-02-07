@@ -61,7 +61,7 @@ jobs:
         run: npm install
       - name: Generate iOS project
         working-directory: example
-        run: npx @react-native-community/cli@latest init SharedPasswordsExample --directory temp-init --version 0.76.9 --skip-git-init --skip-install && cp -r temp-init/ios . && rm -rf temp-init
+        run: npx @react-native-community/cli@latest init SharedPasswordsExample --directory temp-init --version 0.83.1 --skip-git-init --skip-install && cp -r temp-init/ios . && rm -rf temp-init
       - name: Pod install
         working-directory: example/ios
         run: pod install
@@ -95,7 +95,7 @@ jobs:
         run: npm install
       - name: Generate Android project
         working-directory: example
-        run: npx @react-native-community/cli@latest init SharedPasswordsExample --directory temp-init --version 0.76.9 --skip-git-init --skip-install && cp -r temp-init/android . && rm -rf temp-init
+        run: npx @react-native-community/cli@latest init SharedPasswordsExample --directory temp-init --version 0.83.1 --skip-git-init --skip-install && cp -r temp-init/android . && rm -rf temp-init
       - name: Build Android
         working-directory: example/android
         run: ./gradlew assembleDebug

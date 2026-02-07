@@ -59,7 +59,7 @@ interface NativeSharedPasswordsModule {
     signature?: string;
     userHandle?: string;
   }>;
-  getPlatformSupport(): PlatformSupport;
+  getPlatformSupport(): Promise<PlatformSupport>;
 }
 
 const LINKING_ERROR =
@@ -344,18 +344,18 @@ const SharedPasswords = {
    *
    * @example
    * ```typescript
-   * const support = SharedPasswords.getPlatformSupport();
+   * const support = await SharedPasswords.getPlatformSupport();
    * if (support.passkeys) {
    *   // Show passkey registration option
    * }
    * ```
    */
-  getPlatformSupport(): PlatformSupport {
+  async getPlatformSupport(): Promise<PlatformSupport> {
     if (_isExpoGo) {
       return ExpoGoFallback.getPlatformSupport();
     }
     try {
-      return SharedPasswordsModule!.getPlatformSupport();
+      return await SharedPasswordsModule!.getPlatformSupport();
     } catch {
       // Return defaults if module not available
       return {

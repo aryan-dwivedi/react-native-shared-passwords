@@ -7,10 +7,12 @@ import com.facebook.react.uimanager.ViewManager
 
 class SharedPasswordsPackage : ReactPackage {
 
+    @Suppress("DEPRECATION")
     override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
         return listOf(SharedPasswordsModule(reactContext))
     }
 
+    @Suppress("DEPRECATION")
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
         return emptyList()
     }

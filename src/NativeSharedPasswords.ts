@@ -86,13 +86,13 @@ export interface Spec extends TurboModule {
   /**
    * Get platform support information
    */
-  getPlatformSupport(): {
+  getPlatformSupport(): Promise<{
     passwordAutoFill: boolean;
     passkeys: boolean;
     savePassword: boolean;
     minOSVersion: string;
     currentOSVersion: string;
-  };
+  }>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('SharedPasswords');

@@ -150,24 +150,24 @@ describe('ExpoGoFallback', () => {
   });
 
   describe('getPlatformSupport', () => {
-    it('should return all features as not supported', () => {
-      const support = ExpoGoFallback.getPlatformSupport();
+    it('should return all features as not supported', async () => {
+      const support = await ExpoGoFallback.getPlatformSupport();
 
       expect(support.passwordAutoFill).toBe(false);
       expect(support.passkeys).toBe(false);
       expect(support.savePassword).toBe(false);
     });
 
-    it('should include OS version information', () => {
-      const support = ExpoGoFallback.getPlatformSupport();
+    it('should include OS version information', async () => {
+      const support = await ExpoGoFallback.getPlatformSupport();
 
       expect(support.minOSVersion).toBeDefined();
       expect(support.currentOSVersion).toBeDefined();
       expect(support.currentOSVersion).toContain(Platform.OS);
     });
 
-    it('should return correct minOSVersion based on platform', () => {
-      const support = ExpoGoFallback.getPlatformSupport();
+    it('should return correct minOSVersion based on platform', async () => {
+      const support = await ExpoGoFallback.getPlatformSupport();
 
       // Since we mock Platform.OS as 'ios' in jest.setup.js
       expect(support.minOSVersion).toMatch(/iOS|Android/);

@@ -68,7 +68,7 @@ export const ExpoGoFallback = {
     throwExpoGoError('Passkey authentication');
   },
 
-  getPlatformSupport(): PlatformSupport {
+  async getPlatformSupport(): Promise<PlatformSupport> {
     return {
       passwordAutoFill: false,
       passkeys: false,

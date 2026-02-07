@@ -43,7 +43,7 @@ class SharedPasswordsModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun requestPasswordAutoFill(promise: Promise) {
-        val activity = currentActivity
+        val activity = reactContext.currentActivity
         if (activity == null) {
             promise.reject("FAILED", "Activity not available")
             return
@@ -85,7 +85,7 @@ class SharedPasswordsModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun savePassword(username: String, password: String, domain: String, promise: Promise) {
-        val activity = currentActivity
+        val activity = reactContext.currentActivity
         if (activity == null) {
             promise.reject("FAILED", "Activity not available")
             return
@@ -119,7 +119,7 @@ class SharedPasswordsModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun hasStoredCredentials(domain: String, promise: Promise) {
-        val activity = currentActivity
+        val activity = reactContext.currentActivity
         if (activity == null) {
             promise.resolve(false)
             return
@@ -166,7 +166,7 @@ class SharedPasswordsModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun createPasskey(options: ReadableMap, promise: Promise) {
-        val activity = currentActivity
+        val activity = reactContext.currentActivity
         if (activity == null) {
             promise.reject("FAILED", "Activity not available")
             return
@@ -257,7 +257,7 @@ class SharedPasswordsModule(private val reactContext: ReactApplicationContext) :
 
     @ReactMethod
     fun authenticateWithPasskey(options: ReadableMap, promise: Promise) {
-        val activity = currentActivity
+        val activity = reactContext.currentActivity
         if (activity == null) {
             promise.reject("FAILED", "Activity not available")
             return
@@ -316,18 +316,19 @@ class SharedPasswordsModule(private val reactContext: ReactApplicationContext) :
         }
     }
 
-    @ReactMethod(isBlockingSynchronousMethod = true)
-    fun getPlatformSupport(): WritableMap {
+    @ReactMethod
+    fun getPlatformSupport(promise: Promise) {
         val sdkVersion = Build.VERSION.SDK_INT
         val versionString = Build.VERSION.RELEASE
 
-        return Arguments.createMap().apply {
+        val result = Arguments.createMap().apply {
             putBoolean("passwordAutoFill", sdkVersion >= Build.VERSION_CODES.P)
             putBoolean("passkeys", sdkVersion >= Build.VERSION_CODES.P)
             putBoolean("savePassword", sdkVersion >= Build.VERSION_CODES.P)
             putString("minOSVersion", "9.0 (API 28)")
             putString("currentOSVersion", versionString)
         }
+        promise.resolve(result)
     }
 
     private fun parseRegistrationResponse(json: JsonObject): WritableMap {
