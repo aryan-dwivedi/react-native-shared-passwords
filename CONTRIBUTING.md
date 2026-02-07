@@ -6,7 +6,7 @@ Thank you for your interest in contributing!
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/user/react-native-shared-passwords.git
+   git clone https://github.com/aryan-dwivedi/react-native-shared-passwords.git
    cd react-native-shared-passwords
    ```
 

@@ -3,7 +3,7 @@
 Cross-platform password and credential sharing between web and mobile apps using native platform APIs.
 
 [![npm version](https://img.shields.io/npm/v/react-native-shared-passwords.svg)](https://www.npmjs.com/package/react-native-shared-passwords)
-[![license](https://img.shields.io/npm/l/react-native-shared-passwords.svg)](https://github.com/user/react-native-shared-passwords/blob/main/LICENSE)
+[![license](https://img.shields.io/npm/l/react-native-shared-passwords.svg)](https://github.com/aryan-dwivedi/react-native-shared-passwords/blob/main/LICENSE)
 
 ## Features
 
@@ -175,7 +175,7 @@ try {
 
 ## Documentation
 
-Full documentation available at [docs site](https://your-docs-site.com) or in the `/docs` directory.
+Full documentation available at [docs site](https://aryan-dwivedi.github.io/react-native-shared-passwords/) or in the `/docs` directory.
 
 ## Example
 
